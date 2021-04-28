@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  db:
+    container_name: postgres-lah
+    build:
+      context: ./db
+    ports:
+    - "5432:5432"
+  loan:
+    container_name: loan-lah
+    build:
+      context: ./loan/loan-server
+    ports:
+    - "8010:8080"
+    command: java -jar loan.jar
+    environment:
+    - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-lah:5432/loans
