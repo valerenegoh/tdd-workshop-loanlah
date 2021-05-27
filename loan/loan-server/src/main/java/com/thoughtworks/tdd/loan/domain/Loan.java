@@ -74,6 +74,10 @@ public class Loan {
     return interestRate;
   }
 
+  private BigDecimal getInterestPercentage() {
+    return new BigDecimal(interestRate).divide(new BigDecimal(100), 7, RoundingMode.HALF_UP);
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
