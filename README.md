@@ -1,29 +1,16 @@
 # loans-lah-tdd-workshop
 
-## Modules
-### api-tests
-End to end tests for Loans Lah!
-
-### credit-history
-Legacy 3rd party application, used as a dependency in loans-lah app to calculate credit eligibility.
-
+## Structures
 ### loan
-Backend application, exposes api for taking a loan.
+Backend application, exposes APIs for loan domain (e.g. taking a loan, viewing loans belonged to an account), containing 2 modules:
+- **loan-server**: Application code and unit tests for loan service.
+- **loan-acceptance-test**: Acceptance tests of loan service APIs.
 
 ### db
 Database module, used by docker
 
-### loans-lah-app 
-BFF for loans-lah backend services
-
-### loans-lah-web
-UI for loans-lah
-
-### loans-lah-e2e
-e2e test suite for loans-lah
-
 ## Setup
-Setup for project for [IntelliJ](https://github.com/ThoughtWorksInc/loans-lah-tdd-workshop/blob/master/doc/SETUP.md)
+Setup for project for [IntelliJ](doc/SETUP.md)
 
 ## Requirements
 `openjdk-11`
@@ -31,8 +18,6 @@ Setup for project for [IntelliJ](https://github.com/ThoughtWorksInc/loans-lah-td
 `docker` latest version
 
 `docker-compose` [compatible](https://docs.docker.com/compose/compose-file/) with version 3.7 of compose files
-
-`Nodejs` version `12.x`
 
 ## How to test
 Run `./build.sh` from the main directory to build all modules
