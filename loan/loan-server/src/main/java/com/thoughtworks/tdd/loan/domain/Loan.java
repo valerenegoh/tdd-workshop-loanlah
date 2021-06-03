@@ -3,8 +3,6 @@ package com.thoughtworks.tdd.loan.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -53,16 +51,8 @@ public class Loan {
     this.amount = amount;
     this.takenAt = takenAt;
     this.durationInDays = durationInDays;
-    this.interestRate = 10;
+    this.interestRate = interestRateFromDuration(durationInDays);
     this.interestBasis = 365;
-  }
-
-  private void validateLoan(String account, int amount, LocalDate takenAt, int durationInDays) {
-    Objects.requireNonNull(account, "account can not be null");
-    Objects.requireNonNull(takenAt, "takenAt date can not be null");
-    if(amount < 0 || durationInDays < 0) {
-      throw new IllegalArgumentException("amount or duration or interest rate cannot be negative");
-    }
   }
 
   public Long getId() {
@@ -97,5 +87,19 @@ public class Loan {
             ", interestRate=" + interestRate +
             ", interestBasis=" + interestBasis +
             '}';
+  }
+
+  private int interestRateFromDuration(int durationInDays) {
+    if (durationInDays <= 30) return 20;
+    if (durationInDays < 180) return 15;
+    return 5;
+  }
+
+  private void validateLoan(String account, int amount, LocalDate takenAt, int durationInDays) {
+    Objects.requireNonNull(account, "account can not be null");
+    Objects.requireNonNull(takenAt, "takenAt date can not be null");
+    if (amount < 0 || durationInDays < 0) {
+      throw new IllegalArgumentException("amount or duration or interest rate cannot be negative");
+    }
   }
 }
