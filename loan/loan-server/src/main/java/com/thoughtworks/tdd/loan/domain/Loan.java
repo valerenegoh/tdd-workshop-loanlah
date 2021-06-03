@@ -1,6 +1,5 @@
 package com.thoughtworks.tdd.loan.domain;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
