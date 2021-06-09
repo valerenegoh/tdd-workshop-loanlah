@@ -37,7 +37,7 @@ public class Loan {
   @JsonProperty
   private int interestBasis;
 
-  private Loan() {
+  public Loan() {
   }
 
   public Loan(Long id, String account, int amount, LocalDate takenAt, int durationInDays) {
@@ -90,7 +90,7 @@ public class Loan {
   }
 
   private int interestRateFromDuration(int durationInDays) {
-    if (durationInDays <= 30) return 20;
+    if (durationInDays < 30) return 20;
     if (durationInDays < 180) return 15;
     return 5;
   }
