@@ -28,4 +28,9 @@ public class LoanBuilder {
         this.account = account;
         return this;
     }
+
+    public LoanBuilder withTakenOn(LocalDate date) {
+        this.startDate = date;
+        return this;
+    }
 }

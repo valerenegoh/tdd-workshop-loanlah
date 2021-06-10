@@ -1,9 +1,7 @@
 package com.thoughtworks.tdd.loan.domain;
 
-import com.thoughtworks.tdd.loan.utils.Stubs;
+import com.thoughtworks.tdd.loan.utils.LoanBuilder;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -11,22 +9,22 @@ class LoanTest {
 
   @Test
   void shouldNotBeAbleToCreateLoanWithNegativeAmount() {
-    assertThrows(IllegalArgumentException.class, () -> new Loan(Stubs.id(), Stubs.uuid(), -1, LocalDate.now(), 10));
+    assertThrows(IllegalArgumentException.class, () -> new LoanBuilder().withAmount(-1).build());
   }
 
   @Test
   void shouldNotBeAbleToCreateLoanWithNegativeDuration() {
-    assertThrows(IllegalArgumentException.class, () -> new Loan(Stubs.id(), Stubs.uuid(), 10, LocalDate.now(), -1));
+    assertThrows(IllegalArgumentException.class, () -> new LoanBuilder().withDurationInDays(-1).build());
   }
 
   @Test
   void shouldNotBeAbleToCreateLoanWithoutAccountNumber() {
-    assertThrows(NullPointerException.class, () -> new Loan(Stubs.id(), null, 10, LocalDate.now(), 10));
+    assertThrows(NullPointerException.class, () -> new LoanBuilder().withAccount(null).build());
   }
 
   @Test
   void shouldNotBeAbleToCreateLoanWithoutTakenAt() {
-    assertThrows(NullPointerException.class, () -> new Loan(Stubs.id(), Stubs.uuid(), 10, null, 10));
+    assertThrows(NullPointerException.class, () ->new LoanBuilder().withTakenOn(null).build());
   }
 
 }
