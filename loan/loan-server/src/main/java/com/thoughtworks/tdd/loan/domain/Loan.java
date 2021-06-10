@@ -59,10 +59,6 @@ public class Loan {
     return id;
   }
 
-  public int getInterestRate() {
-    return interestRate;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -92,7 +88,7 @@ public class Loan {
   private int interestRateFromDuration(int durationInDays) {
     if (durationInDays < 30) return 20;
     if (durationInDays < 180) return 15;
-    return 5;
+    return 10;
   }
 
   private void validateLoan(String account, int amount, LocalDate takenAt, int durationInDays) {
