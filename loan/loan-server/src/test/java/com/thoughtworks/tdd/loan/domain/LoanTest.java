@@ -59,9 +59,37 @@ class LoanTest {
     }
 
     @Test
+    void shouldCalculateOutstandingAmountFor31Days() {
+        Loan loan = new LoanBuilder().withAmount(1000).withDurationInDays(31).build();
+
+        assertThat(loan.totalOutstanding()).isEqualByComparingTo(new BigDecimal("1012.74"));
+    }
+
+    @Test
+    void shouldCalculateOutstandingAmountFor29Days() {
+        Loan loan = new LoanBuilder().withAmount(1000).withDurationInDays(29).build();
+
+        assertThat(loan.totalOutstanding()).isEqualByComparingTo(new BigDecimal("1015.89"));
+    }
+
+    @Test
     void shouldCalculateOutstandingAmountFor6Months() {
         Loan loan = new LoanBuilder().withAmount(1000).withDurationInDays(180).build();
 
         assertThat(loan.totalOutstanding()).isEqualByComparingTo(new BigDecimal("1073.97"));
+    }
+
+    @Test
+    void shouldCalculateOutstandingAmountFor181Days() {
+        Loan loan = new LoanBuilder().withAmount(1000).withDurationInDays(181).build();
+
+        assertThat(loan.totalOutstanding()).isEqualByComparingTo(new BigDecimal("1049.59"));
+    }
+
+    @Test
+    void shouldCalculateOutstandingAmountFor179Days() {
+        Loan loan = new LoanBuilder().withAmount(1000).withDurationInDays(179).build();
+
+        assertThat(loan.totalOutstanding()).isEqualByComparingTo(new BigDecimal("1073.56"));
     }
 }
