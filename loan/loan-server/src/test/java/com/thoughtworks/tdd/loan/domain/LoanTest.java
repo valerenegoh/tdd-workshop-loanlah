@@ -51,4 +51,17 @@ class LoanTest {
         assertThat(loan.totalOutstanding()).isEqualByComparingTo(new BigDecimal("1041.10"));
     }
 
+    @Test
+    void shouldCalculateOutstandingAmountForAMonth() {
+        Loan loan = new LoanBuilder().withAmount(1000).withDurationInDays(30).build();
+
+        assertThat(loan.totalOutstanding()).isEqualByComparingTo(new BigDecimal("1016.44"));
+    }
+
+    @Test
+    void shouldCalculateOutstandingAmountFor6Months() {
+        Loan loan = new LoanBuilder().withAmount(1000).withDurationInDays(180).build();
+
+        assertThat(loan.totalOutstanding()).isEqualByComparingTo(new BigDecimal("1073.97"));
+    }
 }

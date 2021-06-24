@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -104,7 +103,7 @@ public class Loan {
   }
 
   private int interestRateFromDuration(int durationInDays) {
-    if (durationInDays < 30) return 20;
+    if (durationInDays <= 30) return 20;
     if (durationInDays <= 180) return 15;
     return 10;
   }
