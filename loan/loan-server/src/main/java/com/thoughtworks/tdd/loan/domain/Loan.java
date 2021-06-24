@@ -1,10 +1,16 @@
 package com.thoughtworks.tdd.loan.domain;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Objects;
+
+import static java.math.BigDecimal.ONE;
+import static java.math.RoundingMode.HALF_UP;
 
 @Entity
 public class Loan {
@@ -57,6 +63,18 @@ public class Loan {
 
   public Long getId() {
     return id;
+  }
+
+  @JsonGetter("totalOutstanding")
+  public BigDecimal totalOutstanding() {
+    BigDecimal actualInterestRate = getInterestPercentage()
+            .multiply(new BigDecimal(durationInDays)).divide(new BigDecimal(interestBasis), HALF_UP);
+
+    return new BigDecimal(amount).multiply(ONE.add(actualInterestRate)).setScale(2, HALF_UP);
+  }
+
+  private BigDecimal getInterestPercentage() {
+    return new BigDecimal(interestRate).divide(new BigDecimal(100), 7, HALF_UP);
   }
 
   @Override
