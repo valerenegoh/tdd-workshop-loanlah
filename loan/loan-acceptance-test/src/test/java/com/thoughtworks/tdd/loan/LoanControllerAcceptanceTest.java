@@ -16,7 +16,7 @@ class LoanControllerAcceptanceTest {
     var response =
             given().
                     contentType(JSON).
-                    body("{\"amount\": 200, \"durationInDays\": 10}").
+                    body("{\"amount\": 200, \"durationInDays\": 365}").
                     when().
                     post("/api/v1/accounts/{accountId}/loans/", accountId).
                     then().
@@ -35,6 +35,6 @@ class LoanControllerAcceptanceTest {
             body("amount", equalTo(200)).
             body("interestRate", equalTo(10)).
             body("interestBasis", equalTo(365)).
-            body("durationInDays", equalTo(10));
+            body("durationInDays", equalTo(365));
   }
 }
