@@ -21,9 +21,10 @@ test {
     }
 }
 
-task acceptanceTest(type: Test) {}
+task acceptanceTest(type: Test, group: "verification", dependsOn: [":loan-server:bootJar", "composeUp"]) {}
 
 acceptanceTest {
+    tasks.getByPath("composeUp").mustRunAfter(tasks.getByPath(":loan-server:bootJar"))
     useJUnitPlatform {
         includeTags("acceptance")
     }
@@ -37,7 +38,7 @@ dockerCompose {
 //    removeContainers = false
 }
 
-dockerCompose.isRequiredBy(acceptanceTest)
+//dockerCompose.isRequiredBy(acceptanceTest)
 
 test.doFirst {
     dockerCompose.exposeAsEnvironment(test)
