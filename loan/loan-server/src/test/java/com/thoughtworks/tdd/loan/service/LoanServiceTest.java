@@ -2,7 +2,7 @@ package com.thoughtworks.tdd.loan.service;
 
 import com.thoughtworks.tdd.loan.domain.Loan;
 import com.thoughtworks.tdd.loan.domain.LoanRepository;
-import com.thoughtworks.tdd.loan.infrastructure.http.NewLoan;
+import com.thoughtworks.tdd.loan.infrastructure.http.NewLoanCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,9 +30,7 @@ public class LoanServiceTest {
     void shouldCreateNewLoanWithCorrectParameters() {
         var accountId = "1100";
         var dateTakenAt = LocalDate.now();
-        var newLoanCommand = new NewLoan();
-        newLoanCommand.setAmount(10);
-        newLoanCommand.setDurationInDays(5);
+        var newLoanCommand = new NewLoanCommand(10, 5);
 
         var expected = new Loan(1L, accountId, newLoanCommand.getAmount(),
                 dateTakenAt, newLoanCommand.getDurationInDays());

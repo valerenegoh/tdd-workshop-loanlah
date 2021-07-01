@@ -2,6 +2,7 @@ package com.thoughtworks.tdd.loan.infrastructure.http;
 
 import com.thoughtworks.tdd.loan.domain.Loan;
 import com.thoughtworks.tdd.loan.domain.LoanRepository;
+import com.thoughtworks.tdd.loan.service.LoanService;
 import com.thoughtworks.tdd.loan.utils.LoanBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,13 +17,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.thoughtworks.tdd.loan.utils.Stubs.id;
 import static com.thoughtworks.tdd.loan.utils.Stubs.uuid;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpEntity.EMPTY;
@@ -40,6 +45,9 @@ public class LoanControllerTest {
   private TestRestTemplate testRestTemplate;
   @MockBean
   private LoanRepository loanRepository;
+
+  @MockBean
+  private LoanService loanService;
 
   private String account = uuid();
   private Long loanId = id();
@@ -99,9 +107,9 @@ public class LoanControllerTest {
 
   @Test
   void shouldRequestForANewLoan() {
-    Loan loan = new Loan(account, amount, takenAt, durationInDays);
     Loan persisted = new Loan(id(), account, amount, takenAt, durationInDays);
-    when(loanRepository.save(loan)).thenReturn(persisted);
+    NewLoanCommand newLoanCommand = new NewLoanCommand(amount, durationInDays);
+    when(loanService.createLoan(eq(account), eq(takenAt), eq(newLoanCommand))).thenReturn(persisted);
 
     var loanRequest = "{\"amount\": 200, \"durationInDays\": 10}";
 
