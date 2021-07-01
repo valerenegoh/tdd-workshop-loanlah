@@ -3,9 +3,11 @@ package com.thoughtworks.tdd.loan.service;
 import com.thoughtworks.tdd.loan.domain.Loan;
 import com.thoughtworks.tdd.loan.domain.LoanRepository;
 import com.thoughtworks.tdd.loan.infrastructure.http.NewLoanCommand;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
+@Service
 public class LoanService {
 
     private LoanRepository repository;

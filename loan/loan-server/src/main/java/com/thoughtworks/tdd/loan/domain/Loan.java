@@ -51,7 +51,6 @@ public class Loan {
   }
 
   public Loan(String account, int amount, LocalDate takenAt, int durationInDays) {
-    validateLoan(account, amount, takenAt, durationInDays);
     this.account = account;
     this.amount = amount;
     this.takenAt = takenAt;
@@ -106,13 +105,5 @@ public class Loan {
     if (durationInDays <= 30) return 20;
     if (durationInDays <= 180) return 15;
     return 10;
-  }
-
-  private void validateLoan(String account, int amount, LocalDate takenAt, int durationInDays) {
-    Objects.requireNonNull(account, "account can not be null");
-    Objects.requireNonNull(takenAt, "takenAt date can not be null");
-    if (amount < 0 || durationInDays < 0) {
-      throw new IllegalArgumentException("amount or duration or interest rate cannot be negative");
-    }
   }
 }
