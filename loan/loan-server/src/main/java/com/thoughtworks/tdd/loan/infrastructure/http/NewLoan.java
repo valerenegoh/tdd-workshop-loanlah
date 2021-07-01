@@ -6,6 +6,9 @@ public class NewLoan {
   private int amount;
   private int durationInDays;
 
+  public NewLoan() {
+  }
+
   public NewLoan(int amount, int durationInDays) {
     this.amount = amount;
     this.durationInDays = durationInDays;
