@@ -2,14 +2,14 @@ package com.thoughtworks.tdd.loan.infrastructure.http;
 
 import java.util.Objects;
 
-public class NewLoan {
+public class NewLoanCommand {
   private int amount;
   private int durationInDays;
 
-  public NewLoan() {
+  public NewLoanCommand() {
   }
 
-  public NewLoan(int amount, int durationInDays) {
+  public NewLoanCommand(int amount, int durationInDays) {
     this.amount = amount;
     this.durationInDays = durationInDays;
   }
@@ -34,8 +34,8 @@ public class NewLoan {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    NewLoan newLoan = (NewLoan) o;
-    return amount == newLoan.amount && durationInDays == newLoan.durationInDays;
+    NewLoanCommand newLoanCommand = (NewLoanCommand) o;
+    return amount == newLoanCommand.amount && durationInDays == newLoanCommand.durationInDays;
   }
 
   @Override

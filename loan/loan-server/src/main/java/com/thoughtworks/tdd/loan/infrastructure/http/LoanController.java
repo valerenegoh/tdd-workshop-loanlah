@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,9 +24,9 @@ public class LoanController {
 
   @PostMapping
   public ResponseEntity<?> createNew(@PathVariable("accountId") String accountId,
-                                              @RequestBody NewLoan newLoan) {
+                                              @RequestBody NewLoanCommand newLoanCommand) {
     try {
-      var loan = new Loan(accountId, newLoan.getAmount(), LocalDate.now(), newLoan.getDurationInDays());
+      var loan = new Loan(accountId, newLoanCommand.getAmount(), LocalDate.now(), newLoanCommand.getDurationInDays());
       var saved = loanRepository.save(loan);
       var status = new LoanStatus("ok", format("/api/v1/accounts/%s/loans/%s", accountId, saved.getId()));
       return accepted().body(status);
