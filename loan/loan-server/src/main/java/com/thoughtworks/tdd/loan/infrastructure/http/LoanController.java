@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,7 @@ public class LoanController {
 
   @PostMapping
   public ResponseEntity<?> createNew(@PathVariable("accountId") String accountId,
-                                              @RequestBody NewLoanCommand newLoanCommand) {
+                                     @Valid @RequestBody NewLoanCommand newLoanCommand) {
     try {
       var loan = new Loan(accountId, newLoanCommand.getAmount(), LocalDate.now(), newLoanCommand.getDurationInDays());
       var saved = loanRepository.save(loan);

@@ -1,9 +1,15 @@
 package com.thoughtworks.tdd.loan.infrastructure.http;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 public class NewLoanCommand {
+  @Min(0)
+  @NotNull
   private int amount;
+  @Min(0)
+  @NotNull
   private int durationInDays;
 
   public NewLoanCommand() {
