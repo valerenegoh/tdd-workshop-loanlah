@@ -19,11 +19,11 @@ dependencies {
     implementation 'org.flywaydb:flyway-core:5.2.2'
     implementation 'org.postgresql:postgresql:42.2.8'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.4.2'
     testImplementation 'com.h2database:h2:1.4.199'
     testImplementation 'io.rest-assured:rest-assured:4.1.1'
     testImplementation 'io.rest-assured:rest-assured-all:4.1.1'
     testImplementation 'org.hamcrest:hamcrest:2.1'
+    testImplementation 'org.mockito:mockito-junit-jupiter:3.11.2'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude module: 'junit'
     }
