@@ -63,6 +63,10 @@ public class Loan {
     return id;
   }
 
+  public int getInterestRate() {
+    return interestRate;
+  }
+
   @JsonGetter("totalOutstanding")
   public BigDecimal totalOutstanding() {
     BigDecimal actualInterestRate = getInterestPercentage()

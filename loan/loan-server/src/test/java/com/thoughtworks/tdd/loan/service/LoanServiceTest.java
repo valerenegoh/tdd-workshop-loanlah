@@ -6,10 +6,15 @@ import com.thoughtworks.tdd.loan.infrastructure.http.NewLoanCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -40,5 +45,32 @@ public class LoanServiceTest {
         var loan = loanService.createLoan(accountId, dateTakenAt, newLoanCommand);
 
         assertThat(loan).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @MethodSource("getInterestRateParameters")
+    void shouldCreateLoanWithCorrectInterestRateWhenLessThanOneYear(int duration, int expectedInterestRate) {
+        var accountId = "1100";
+        var dateTakenAt = LocalDate.now();
+        var newLoanCommand = new NewLoanCommand(10, duration);
+
+        var expected = new Loan(1L, accountId, newLoanCommand.getAmount(),
+                dateTakenAt, newLoanCommand.getDurationInDays());
+
+        when(repository.save(new Loan(accountId, newLoanCommand.getAmount(), dateTakenAt, newLoanCommand.getDurationInDays()))).thenReturn(expected);
+
+        var loan = loanService.createLoan(accountId, dateTakenAt, newLoanCommand);
+
+        assertThat(loan.getInterestRate()).isEqualTo(expectedInterestRate);
+    }
+
+    private static Stream<Arguments> getInterestRateParameters() {
+        return Stream.of(
+                Arguments.of(5, 20),
+                Arguments.of(30, 20),
+                Arguments.of(45, 15),
+                Arguments.of(180, 15),
+                Arguments.of(200, 10)
+            );
     }
 }
