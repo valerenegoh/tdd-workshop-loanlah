@@ -104,6 +104,30 @@ class LoanControllerIntegrationTest {
     assertThat(loanResponse.getStatusCode()).isEqualTo(OK);
   }
 
+  @Test
+  void shouldReturnLoanUsingExternalInterestRateProvider() {
+    var loanRequest = "{\"amount\": 200, \"durationInDays\": 600}";
+    var expectedInterestRate = 50;
+
+    ResponseEntity<LoanStatus> response = testRestTemplate.exchange(
+            "/api/v1/accounts/{accountId}/loans/",
+            POST,
+            new HttpEntity<>(loanRequest, headers()),
+            LoanStatus.class,
+            account);
+
+    assertThat(response.getStatusCode()).isEqualTo(ACCEPTED);
+    String url = response.getBody().getLocation().getUrl();
+
+    ResponseEntity<Loan> loanResponse = testRestTemplate.exchange(
+            url,
+            GET,
+            EMPTY,
+            Loan.class);
+
+    assertThat(loanResponse.getBody().getInterestRate()).isEqualTo(expectedInterestRate);
+  }
+
   private static HttpHeaders headers() {
     var headers = new HttpHeaders();
     headers.add(ACCEPT, APPLICATION_JSON_VALUE);
