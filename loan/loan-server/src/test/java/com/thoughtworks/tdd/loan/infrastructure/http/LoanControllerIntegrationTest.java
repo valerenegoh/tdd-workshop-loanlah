@@ -77,7 +77,7 @@ class LoanControllerIntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(OK);
     assertThat(response.getBody()).hasSize(1);
     assertThat(response.getBody()).hasOnlyOneElementSatisfying(loan ->
-            assertThat(loan).isEqualToIgnoringGivenFields(new Loan(account, amount, takenAt, durationInDays), "id"));
+            assertThat(loan).isEqualToIgnoringGivenFields(new Loan(account, amount, takenAt, durationInDays, 20), "id"));
   }
 
 

@@ -38,9 +38,9 @@ public class LoanServiceTest {
         var newLoanCommand = new NewLoanCommand(10, 5);
 
         var expected = new Loan(1L, accountId, newLoanCommand.getAmount(),
-                dateTakenAt, newLoanCommand.getDurationInDays());
+                dateTakenAt, newLoanCommand.getDurationInDays(), 20);
 
-        when(repository.save(new Loan(accountId, newLoanCommand.getAmount(), dateTakenAt, newLoanCommand.getDurationInDays()))).thenReturn(expected);
+        when(repository.save(new Loan(accountId, newLoanCommand.getAmount(), dateTakenAt, newLoanCommand.getDurationInDays(), 20))).thenReturn(expected);
 
         var loan = loanService.createLoan(accountId, dateTakenAt, newLoanCommand);
 
@@ -55,9 +55,9 @@ public class LoanServiceTest {
         var newLoanCommand = new NewLoanCommand(10, duration);
 
         var expected = new Loan(1L, accountId, newLoanCommand.getAmount(),
-                dateTakenAt, newLoanCommand.getDurationInDays());
+                dateTakenAt, newLoanCommand.getDurationInDays(), expectedInterestRate);
 
-        when(repository.save(new Loan(accountId, newLoanCommand.getAmount(), dateTakenAt, newLoanCommand.getDurationInDays()))).thenReturn(expected);
+        when(repository.save(new Loan(accountId, newLoanCommand.getAmount(), dateTakenAt, newLoanCommand.getDurationInDays(), expectedInterestRate))).thenReturn(expected);
 
         var loan = loanService.createLoan(accountId, dateTakenAt, newLoanCommand);
 
@@ -73,4 +73,7 @@ public class LoanServiceTest {
                 Arguments.of(200, 10)
             );
     }
+
+    @Test
+    void shouldCreateLoanWithInterestRateFromProviderWhenDurationIsMoreThan1Year() {}
 }

@@ -45,17 +45,17 @@ public class Loan {
   public Loan() {
   }
 
-  public Loan(Long id, String account, int amount, LocalDate takenAt, int durationInDays) {
-    this(account, amount, takenAt, durationInDays);
+  public Loan(Long id, String account, int amount, LocalDate takenAt, int durationInDays, int interestRate) {
+    this(account, amount, takenAt, durationInDays, interestRate);
     this.id = id;
   }
 
-  public Loan(String account, int amount, LocalDate takenAt, int durationInDays) {
+  public Loan(String account, int amount, LocalDate takenAt, int durationInDays, int interestRate) {
     this.account = account;
     this.amount = amount;
     this.takenAt = takenAt;
     this.durationInDays = durationInDays;
-    this.interestRate = interestRateFromDuration(durationInDays);
+    this.interestRate = interestRate;
     this.interestBasis = 365;
   }
 
@@ -103,11 +103,5 @@ public class Loan {
             ", interestRate=" + interestRate +
             ", interestBasis=" + interestBasis +
             '}';
-  }
-
-  private int interestRateFromDuration(int durationInDays) {
-    if (durationInDays <= 30) return 20;
-    if (durationInDays <= 180) return 15;
-    return 10;
   }
 }

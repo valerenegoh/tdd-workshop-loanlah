@@ -17,8 +17,18 @@ public class LoanService {
     }
 
     public Loan createLoan(String accountId, LocalDate dateTakenAt, NewLoanCommand newLoanCommand) {
-        var loan = new Loan(accountId, newLoanCommand.getAmount(), dateTakenAt, newLoanCommand.getDurationInDays());
+        var loan = new Loan(accountId,
+                newLoanCommand.getAmount(),
+                dateTakenAt,
+                newLoanCommand.getDurationInDays(),
+                interestRateFromDuration(newLoanCommand.getDurationInDays()));
 
         return repository.save(loan);
+    }
+
+    private int interestRateFromDuration(int durationInDays) {
+        if (durationInDays <= 30) return 20;
+        if (durationInDays <= 180) return 15;
+        return 10;
     }
 }
