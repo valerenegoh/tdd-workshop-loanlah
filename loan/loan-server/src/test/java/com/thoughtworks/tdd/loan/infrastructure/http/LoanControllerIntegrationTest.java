@@ -2,13 +2,20 @@ package com.thoughtworks.tdd.loan.infrastructure.http;
 
 import com.thoughtworks.tdd.loan.domain.Loan;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.client.ExpectedCount;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.test.web.client.match.MockRestRequestMatchers;
+import org.springframework.test.web.client.response.MockRestResponseCreators;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,13 +30,21 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.test.web.client.ExpectedCount.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class LoanControllerIntegrationTest {
 
   @Autowired
   private TestRestTemplate testRestTemplate;
+
+  @Autowired
+  RestTemplate restTemplate;
+
 
   private String account = uuid();
   private LocalDate takenAt = LocalDate.now();
@@ -108,6 +123,10 @@ class LoanControllerIntegrationTest {
   void shouldReturnLoanUsingExternalInterestRateProvider() {
     var loanRequest = "{\"amount\": 200, \"durationInDays\": 600}";
     var expectedInterestRate = 50;
+
+    MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
+    server.expect(once(), requestTo("https://random-data-api.com/api/number/random_number"))
+            .andRespond(withSuccess("{ \"digit\": 50 }", APPLICATION_JSON));
 
     ResponseEntity<LoanStatus> response = testRestTemplate.exchange(
             "/api/v1/accounts/{accountId}/loans/",
