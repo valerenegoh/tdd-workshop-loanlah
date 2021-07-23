@@ -1,8 +1,10 @@
 package com.thoughtworks.tdd.loan.infrastructure.http;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+@Component
 public class InterestRateProviderApi {
 
     private final RestTemplate restTemplate;

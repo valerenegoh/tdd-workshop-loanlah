@@ -2,6 +2,8 @@ package com.thoughtworks.tdd.loan.service;
 
 import com.thoughtworks.tdd.loan.domain.Loan;
 import com.thoughtworks.tdd.loan.domain.LoanRepository;
+import com.thoughtworks.tdd.loan.infrastructure.http.InterestRateException;
+import com.thoughtworks.tdd.loan.infrastructure.http.InterestRateProviderApi;
 import com.thoughtworks.tdd.loan.infrastructure.http.NewLoanCommand;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +13,14 @@ import java.time.LocalDate;
 public class LoanService {
 
     private LoanRepository repository;
+    private InterestRateProviderApi interestRateProviderApi;
 
-    public LoanService(LoanRepository loanRepository) {
+    public LoanService(LoanRepository loanRepository, InterestRateProviderApi interestRateProviderApi) {
         repository = loanRepository;
+        this.interestRateProviderApi = interestRateProviderApi;
     }
 
-    public Loan createLoan(String accountId, LocalDate dateTakenAt, NewLoanCommand newLoanCommand) {
+    public Loan createLoan(String accountId, LocalDate dateTakenAt, NewLoanCommand newLoanCommand) throws InterestRateException {
         var loan = new Loan(accountId,
                 newLoanCommand.getAmount(),
                 dateTakenAt,
@@ -26,9 +30,10 @@ public class LoanService {
         return repository.save(loan);
     }
 
-    private int interestRateFromDuration(int durationInDays) {
+    private int interestRateFromDuration(int durationInDays) throws InterestRateException {
         if (durationInDays <= 30) return 20;
         if (durationInDays <= 180) return 15;
-        return 10;
+        if (durationInDays <= 365) return 10;
+        return interestRateProviderApi.getRate();
     }
 }

@@ -2,6 +2,8 @@ package com.thoughtworks.tdd.loan.service;
 
 import com.thoughtworks.tdd.loan.domain.Loan;
 import com.thoughtworks.tdd.loan.domain.LoanRepository;
+import com.thoughtworks.tdd.loan.infrastructure.http.InterestRateException;
+import com.thoughtworks.tdd.loan.infrastructure.http.InterestRateProviderApi;
 import com.thoughtworks.tdd.loan.infrastructure.http.NewLoanCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,11 +26,13 @@ public class LoanServiceTest {
 
     @Mock
     private LoanRepository repository;
+    @Mock
+    private InterestRateProviderApi interestRateProviderApi;
     private LoanService loanService;
 
     @BeforeEach
     void setup() {
-        loanService = new LoanService(repository);
+        loanService = new LoanService(repository, interestRateProviderApi);
     }
 
     @Test
@@ -75,5 +79,21 @@ public class LoanServiceTest {
     }
 
     @Test
-    void shouldCreateLoanWithInterestRateFromProviderWhenDurationIsMoreThan1Year() {}
+    void shouldCreateLoanWithInterestRateFromProviderWhenDurationIsMoreThan1Year() throws InterestRateException {
+        var accountId = "1100";
+        var dateTakenAt = LocalDate.now();
+        var newLoanCommand = new NewLoanCommand(10, 500);
+        var expectedInterestRate = 30;
+
+        when(interestRateProviderApi.getRate()).thenReturn(expectedInterestRate);
+
+        var expected = new Loan(1L, accountId, newLoanCommand.getAmount(),
+                dateTakenAt, newLoanCommand.getDurationInDays(), expectedInterestRate);
+
+        when(repository.save(new Loan(accountId, newLoanCommand.getAmount(), dateTakenAt, newLoanCommand.getDurationInDays(), expectedInterestRate))).thenReturn(expected);
+
+        var loan = loanService.createLoan(accountId, dateTakenAt, newLoanCommand);
+
+        assertThat(loan.getInterestRate()).isEqualTo(expectedInterestRate);
+    }
 }
