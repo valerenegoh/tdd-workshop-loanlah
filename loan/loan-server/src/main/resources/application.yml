@@ -17,4 +17,4 @@ logging:
     org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl: ERROR
 
 external:
-  interest-rate-url: https://random-data-api.com/api/number/random_number
+  interest-rate-url: "${INTEREST_RATE_URL}"

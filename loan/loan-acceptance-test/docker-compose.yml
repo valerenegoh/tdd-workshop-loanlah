@@ -16,6 +16,7 @@ services:
     command: java -jar loan.jar
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/loans
+      INTEREST_RATE_URL: http://mock-server:8080/
     depends_on:
     - "db"
   mock-server:

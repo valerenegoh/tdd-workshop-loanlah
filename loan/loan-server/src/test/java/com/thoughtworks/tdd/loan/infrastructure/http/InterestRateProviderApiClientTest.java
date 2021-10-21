@@ -67,6 +67,6 @@ public class InterestRateProviderApiClientTest {
         when(restTemplate.getForObject(interestRestUrl, InterestRateApiResponse.class))
                 .thenThrow(new RestClientException("boom!!!"));
         assertThatThrownBy(interestRateProviderApi::getRate).isInstanceOf(InterestRateException.class)
-                .hasMessageContaining("Problem while calling GET " + INTEREST_RATE_URL);
+                .hasMessageContaining("Problem while calling GET " + interestRestUrl);
     }
 }
