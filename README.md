@@ -22,6 +22,10 @@ Setup for project for [IntelliJ](doc/SETUP.md)
 
 `docker-compose` [compatible](https://docs.docker.com/compose/compose-file/) with version 3.7 of compose files
 
+## How to add acceptance test
+`cd loan/loan-acceptance-test`  
+`docker-compose up --build`  
+
 ## How to test
 Run `./build.sh` from the main directory to build all modules
 
