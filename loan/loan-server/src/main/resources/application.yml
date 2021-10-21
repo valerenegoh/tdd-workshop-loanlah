@@ -15,3 +15,6 @@ spring:
 logging:
   level:
     org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl: ERROR
+
+external:
+  interest-rate-url: https://random-data-api.com/api/number/random_number

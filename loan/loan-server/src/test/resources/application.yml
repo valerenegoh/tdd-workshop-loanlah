@@ -10,3 +10,6 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
   flyway:
     enabled: true
+
+external:
+  interest-rate-url: https://example.com/interest-rate

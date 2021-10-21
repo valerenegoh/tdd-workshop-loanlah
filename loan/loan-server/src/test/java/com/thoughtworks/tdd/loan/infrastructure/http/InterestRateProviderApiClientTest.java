@@ -15,30 +15,31 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class InterestRateProviderApiClientTest {
+    public static final String INTEREST_RATE_URL = "https://random-data-api.com/api/number/random_number";
+
     @Mock
     RestTemplate            restTemplate;
+
     InterestRateProviderApi interestRateProviderApi;
 
     @BeforeEach
     void setUp() {
-        interestRateProviderApi = new InterestRateProviderApi(restTemplate);
+        interestRateProviderApi = new InterestRateProviderApi(restTemplate, INTEREST_RATE_URL);
     }
 
     @Test
     void shouldReturnResponseFromExternalApi() throws InterestRateException {
-        when(restTemplate.getForObject("https://random-data-api.com/api/number/random_number",
-                                       InterestRateApiResponse.class)).thenReturn(new InterestRateApiResponse(3));
+        when(restTemplate.getForObject(INTEREST_RATE_URL, InterestRateApiResponse.class))
+                .thenReturn(new InterestRateApiResponse(3));
 
         Integer interestRate = interestRateProviderApi.getRate();
 
         assertThat(interestRate).isEqualTo(3);
     }
 
-
     @Test
-    void shouldReturnInterestRateExceptionIfResponseIsNotOfSameType() {
-        when(restTemplate.getForObject("https://random-data-api.com/api/number/random_number",
-                                       InterestRateApiResponse.class)).thenReturn(null);
+    void shouldReturnInterestRateExceptionIfResponseIsNotOfCorrectType() {
+        when(restTemplate.getForObject(INTEREST_RATE_URL, InterestRateApiResponse.class)).thenReturn(null);
 
         assertThatThrownBy(interestRateProviderApi::getRate).isInstanceOf(InterestRateException.class)
                 .hasMessageContaining("Interest rate not available!");
@@ -46,11 +47,26 @@ public class InterestRateProviderApiClientTest {
 
     @Test
     void shouldReturnInterestRateExceptionIfThereIsAnyExceptionWithApiCall() {
-        when(restTemplate.getForObject("https://random-data-api.com/api/number/random_number",
-                                       InterestRateApiResponse.class)).thenThrow(new RestClientException("boom!!!"));
+        when(restTemplate.getForObject(INTEREST_RATE_URL, InterestRateApiResponse.class))
+                .thenThrow(new RestClientException("boom!!!"));
 
         assertThatThrownBy(interestRateProviderApi::getRate).isInstanceOf(InterestRateException.class)
-                .hasMessageContaining("Interest rate not available!");
+                .hasMessageContaining("Problem while calling GET " + INTEREST_RATE_URL);
     }
 
+    @Test
+    void shouldUseInterestRateUrlProvided() {
+        var interestRestUrl = "https://example.com/api/number/random_number";
+        var interestRateProviderApi = new InterestRateProviderApi(restTemplate, interestRestUrl);
+
+        when(restTemplate.getForObject(interestRestUrl, InterestRateApiResponse.class))
+                .thenReturn(new InterestRateApiResponse(3));
+        Integer interestRate = interestRateProviderApi.getRate();
+        assertThat(interestRate).isEqualTo(3);
+
+        when(restTemplate.getForObject(interestRestUrl, InterestRateApiResponse.class))
+                .thenThrow(new RestClientException("boom!!!"));
+        assertThatThrownBy(interestRateProviderApi::getRate).isInstanceOf(InterestRateException.class)
+                .hasMessageContaining("Problem while calling GET " + INTEREST_RATE_URL);
+    }
 }

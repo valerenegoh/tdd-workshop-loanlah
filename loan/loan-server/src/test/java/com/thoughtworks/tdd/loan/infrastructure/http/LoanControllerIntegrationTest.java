@@ -111,7 +111,7 @@ class LoanControllerIntegrationTest {
         var loanRequest = "{\"amount\": 200, \"durationInDays\": 500}";
 
         MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
-        server.expect(once(), requestTo("https://random-data-api.com/api/number/random_number"))
+        server.expect(once(), requestTo("https://example.com/interest-rate"))
                 .andRespond(withSuccess("{ \"digit\": 5 }", APPLICATION_JSON));
 
         ResponseEntity<LoanStatus> response = testRestTemplate.exchange(

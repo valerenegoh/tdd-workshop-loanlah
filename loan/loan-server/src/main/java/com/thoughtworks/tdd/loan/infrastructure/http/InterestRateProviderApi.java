@@ -1,5 +1,6 @@
 package com.thoughtworks.tdd.loan.infrastructure.http;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.*;
 
@@ -7,18 +8,19 @@ import org.springframework.web.client.*;
 public class InterestRateProviderApi {
 
     private final RestTemplate restTemplate;
-    private final String URL = "https://random-data-api.com/api/number/random_number";
+    private final String interestRateUrl;
 
-    public InterestRateProviderApi(RestTemplate restTemplate) {
+    public InterestRateProviderApi(RestTemplate restTemplate, @Value("${external.interest-rate-url}") String interestRateUrl) {
         this.restTemplate = restTemplate;
+        this.interestRateUrl = interestRateUrl;
     }
 
     public int getRate() throws InterestRateException {
         InterestRateApiResponse interestRate;
         try {
-            interestRate = restTemplate.getForObject(URL, InterestRateApiResponse.class);
+            interestRate = restTemplate.getForObject(interestRateUrl, InterestRateApiResponse.class);
         } catch (RestClientException e) {
-            throw InterestRateException.NotAvailable(e);
+            throw new InterestRateException("Problem while calling GET " + interestRateUrl, e);
         }
         if (interestRate == null)
             throw InterestRateException.NotAvailable();
