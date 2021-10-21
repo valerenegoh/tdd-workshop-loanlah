@@ -9,32 +9,33 @@ import static org.hamcrest.core.IsNull.notNullValue;
 
 class LoanControllerAcceptanceTest {
 
-  private String accountId = uuid();
+    private String accountId = uuid();
 
-  @AcceptanceTest
-  void shouldRequestNewLoanAndSeeAmountAndInterestRate() {
-    var response =
-            given().
-                    contentType(JSON).
-                    body("{\"amount\": 200, \"durationInDays\": 365}").
-                    when().
-                    post("/api/v1/accounts/{accountId}/loans/", accountId).
-                    then().
-                    statusCode(202).
-                    body("status", equalTo("ok")).
-                    body("location.url", notNullValue()).
-                    extract();
+    @AcceptanceTest
+    void shouldRequestNewLoanAndSeeAmountAndInterestRate() {
+        var response =
+                given().
+                        contentType(JSON).
+                        body("{\"amount\": 200, \"durationInDays\": 365}").
+                        when().
+                        post("/api/v1/accounts/{accountId}/loans/", accountId).
+                        then().
+                        statusCode(202).
+                        body("status", equalTo("ok")).
+                        body("location.url", notNullValue()).
+                        extract();
 
-    String newLoanUrl = response.body().jsonPath(jsonPathConfig()).getString("location.url");
+        String newLoanUrl = response.body().jsonPath(jsonPathConfig()).getString("location.url");
 
-    given().
-            when().
-            get(newLoanUrl).
-            then().
-            statusCode(200).
-            body("amount", equalTo(200)).
-            body("interestRate", equalTo(10)).
-            body("interestBasis", equalTo(365)).
-            body("durationInDays", equalTo(365));
-  }
+        given().
+                when().
+                get(newLoanUrl).
+                then().
+                statusCode(200).
+                body("amount", equalTo(200)).
+                body("interestRate", equalTo(10)).
+                body("interestBasis", equalTo(365)).
+                body("durationInDays", equalTo(365)).
+                body("totalOutstanding", equalTo(220.0F));
+    }
 }
