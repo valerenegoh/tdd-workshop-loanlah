@@ -1,7 +1,7 @@
 package com.thoughtworks.tdd.loan.service;
 
 import com.thoughtworks.tdd.loan.domain.*;
-import com.thoughtworks.tdd.loan.infrastructure.http.NewLoanCommand;
+import com.thoughtworks.tdd.loan.infrastructure.http.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,12 +24,14 @@ class LoanServiceTest {
 
     @Mock
     private LoanRepository loanRepository;
+    @Mock
+    private InterestRateProviderApi interestRateProviderApi;
 
     private LoanService loanService;
 
     @BeforeEach
     void setUp() {
-        loanService = new LoanService(loanRepository);
+        loanService = new LoanService(loanRepository, interestRateProviderApi);
     }
 
     @Test
@@ -83,5 +85,26 @@ class LoanServiceTest {
                 Arguments.of(181, 10),
                 Arguments.of(365, 10)
         );
+    }
+
+    @Test
+    void shouldCreateLoanWithExternalApiInterestRateForDurationsMoreThan365Days() {
+        int duration = 500;
+        int interestRate = 5;
+        NewLoanCommand newLoanCommand = new NewLoanCommand(amount, duration);
+
+        Loan expectedLoan = new Loan(accountId, amount, takenAt, duration, interestRate);
+
+        when(loanRepository.save(
+                new Loan(accountId,
+                        newLoanCommand.getAmount(),
+                        takenAt,
+                        newLoanCommand.getDurationInDays(),
+                        interestRate))
+        ).thenReturn(expectedLoan);
+        when(interestRateProviderApi.getRate()).thenReturn(interestRate);
+        Loan actualLoan = loanService.createLoan(accountId, newLoanCommand, takenAt);
+
+        assertThat(actualLoan).isEqualTo(expectedLoan);
     }
 }

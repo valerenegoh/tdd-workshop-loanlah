@@ -1,7 +1,7 @@
 package com.thoughtworks.tdd.loan.service;
 
 import com.thoughtworks.tdd.loan.domain.*;
-import com.thoughtworks.tdd.loan.infrastructure.http.NewLoanCommand;
+import com.thoughtworks.tdd.loan.infrastructure.http.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -9,9 +9,11 @@ import java.time.LocalDate;
 @Service
 public class LoanService {
     private LoanRepository loanRepository;
+    private InterestRateProviderApi interestRateProviderApi;
 
-    public LoanService(LoanRepository loanRepository) {
+    public LoanService(LoanRepository loanRepository, InterestRateProviderApi interestRateProviderApi) {
         this.loanRepository = loanRepository;
+        this.interestRateProviderApi = interestRateProviderApi;
     }
 
     public Loan createLoan(String accountId, NewLoanCommand newLoanCommand, LocalDate takenAt) {
@@ -27,6 +29,6 @@ public class LoanService {
         if (durationInDays <= 30) return 20;
         if (durationInDays <= 180) return 15;
         if (durationInDays <= 365) return 10;
-        return 5;
+        return interestRateProviderApi.getRate();
     }
 }
