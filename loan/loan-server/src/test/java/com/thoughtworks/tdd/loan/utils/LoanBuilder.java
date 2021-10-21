@@ -9,13 +9,24 @@ public class LoanBuilder {
     int amount = 100;
     LocalDate startDate = LocalDate.now();
     int durationInDays = 10;
+    int interestRate = 20;
 
     public Loan build() {
-        return new Loan(account, amount, startDate, durationInDays);
+        return new Loan(account, amount, startDate, durationInDays, interestRate);
+    }
+
+    public LoanBuilder withAccount(String account) {
+        this.account = account;
+        return this;
     }
 
     public LoanBuilder withAmount(int amount) {
         this.amount = amount;
+        return this;
+    }
+
+    public LoanBuilder withTakenOn(LocalDate date) {
+        this.startDate = date;
         return this;
     }
 
@@ -24,13 +35,8 @@ public class LoanBuilder {
         return this;
     }
 
-    public LoanBuilder withAccount(String account) {
-        this.account = account;
-        return this;
-    }
-
-    public LoanBuilder withTakenOn(LocalDate date) {
-        this.startDate = date;
+    public LoanBuilder withInterestRate(int interestRate) {
+        this.interestRate = interestRate;
         return this;
     }
 }

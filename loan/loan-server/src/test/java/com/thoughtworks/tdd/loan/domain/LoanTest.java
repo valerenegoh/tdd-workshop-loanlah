@@ -36,10 +36,11 @@ class LoanTest {
 
     @ParameterizedTest
     @MethodSource("provideDurationsAndOutstandingAmounts")
-    void shouldCalculateOutstandingLoanGivenDuration(int duration, BigDecimal expectedOutstanding) {
+    void shouldCalculateOutstandingLoanGivenDuration(int duration, int interestRate, BigDecimal expectedOutstanding) {
         Loan loan = new LoanBuilder()
                 .withAmount(1000)
                 .withDurationInDays(duration)
+                .withInterestRate(interestRate)
                 .build();
 
         BigDecimal actualOutstanding = loan.totalOutstanding();
@@ -49,15 +50,15 @@ class LoanTest {
 
     private static Stream<Arguments> provideDurationsAndOutstandingAmounts() {
         return Stream.of(
-                Arguments.of(10, BigDecimal.valueOf(1005.48).setScale(2, HALF_UP)),
-                Arguments.of(29, BigDecimal.valueOf(1015.89).setScale(2, HALF_UP)),
-                Arguments.of(30, BigDecimal.valueOf(1016.44).setScale(2, HALF_UP)),
-                Arguments.of(31, BigDecimal.valueOf(1012.74).setScale(2, HALF_UP)),
-                Arguments.of(100, BigDecimal.valueOf(1041.10).setScale(2, HALF_UP)),
-                Arguments.of(179, BigDecimal.valueOf(1073.56).setScale(2, HALF_UP)),
-                Arguments.of(180, BigDecimal.valueOf(1073.97).setScale(2, HALF_UP)),
-                Arguments.of(181, BigDecimal.valueOf(1049.59).setScale(2, HALF_UP)),
-                Arguments.of(365, BigDecimal.valueOf(1100.00).setScale(2, HALF_UP))
+                Arguments.of(10, 20, BigDecimal.valueOf(1005.48).setScale(2, HALF_UP)),
+                Arguments.of(29, 20, BigDecimal.valueOf(1015.89).setScale(2, HALF_UP)),
+                Arguments.of(30, 20, BigDecimal.valueOf(1016.44).setScale(2, HALF_UP)),
+                Arguments.of(31, 15, BigDecimal.valueOf(1012.74).setScale(2, HALF_UP)),
+                Arguments.of(100, 15, BigDecimal.valueOf(1041.10).setScale(2, HALF_UP)),
+                Arguments.of(179, 15, BigDecimal.valueOf(1073.56).setScale(2, HALF_UP)),
+                Arguments.of(180, 15, BigDecimal.valueOf(1073.97).setScale(2, HALF_UP)),
+                Arguments.of(181, 10, BigDecimal.valueOf(1049.59).setScale(2, HALF_UP)),
+                Arguments.of(365, 10, BigDecimal.valueOf(1100.00).setScale(2, HALF_UP))
         );
     }
 }
