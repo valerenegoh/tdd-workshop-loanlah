@@ -7,6 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,13 +20,19 @@ import static org.springframework.http.HttpEntity.EMPTY;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.http.HttpStatus.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.*;
+import static org.springframework.test.web.client.ExpectedCount.once;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class LoanControllerIntegrationTest {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     private String account = uuid();
     private LocalDate takenAt = LocalDate.now();
@@ -48,7 +56,6 @@ class LoanControllerIntegrationTest {
         assertThat(response.getBody().getStatus()).isEqualTo("ok");
         assertThat(response.getBody().getLocation().getUrl()).startsWith(String.format("/api/v1/accounts/%s/loans/", account));
     }
-
 
     @Test
     void shouldReturnAllLoansForAnAccount() {
@@ -76,7 +83,6 @@ class LoanControllerIntegrationTest {
                 assertThat(loan).isEqualToIgnoringGivenFields(new Loan(account, amount, takenAt, durationInDays, interestRate), "id"));
     }
 
-
     @Test
     void shouldReturnLoanByAccountAndLoanId() {
         var loanRequest = "{\"amount\": 200, \"durationInDays\": 10}";
@@ -98,6 +104,33 @@ class LoanControllerIntegrationTest {
                 Loan.class);
 
         assertThat(loanResponse.getStatusCode()).isEqualTo(OK);
+    }
+
+    @Test
+    void shouldReturnLoanUsingExternalInterestRateProvider() {
+        var loanRequest = "{\"amount\": 200, \"durationInDays\": 500}";
+
+        MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
+        server.expect(once(), requestTo("https://random-data-api.com/api/number/random_number"))
+                .andRespond(withSuccess("{ \"digit\": 5 }", APPLICATION_JSON));
+
+        ResponseEntity<LoanStatus> response = testRestTemplate.exchange(
+                "/api/v1/accounts/{accountId}/loans/",
+                POST,
+                new HttpEntity<>(loanRequest, headers()),
+                LoanStatus.class,
+                account);
+
+        assertThat(response.getStatusCode()).isEqualTo(ACCEPTED);
+        String url = response.getBody().getLocation().getUrl();
+
+        ResponseEntity<Loan> loanResponse = testRestTemplate.exchange(
+                url,
+                GET,
+                EMPTY,
+                Loan.class);
+
+        assertThat(loanResponse.getBody().getInterestRate()).isEqualTo(5);
     }
 
     private static HttpHeaders headers() {

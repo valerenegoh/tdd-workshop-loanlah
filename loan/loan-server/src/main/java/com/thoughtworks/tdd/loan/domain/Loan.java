@@ -62,6 +62,10 @@ public class Loan {
         return id;
     }
 
+    public int getInterestRate() {
+        return interestRate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
